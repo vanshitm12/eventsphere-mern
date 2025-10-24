@@ -4,7 +4,10 @@ const baseURL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
   : 'https://eventsphere-mern.onrender.com'; // ✅ Ensure correct backend URL
 
+
+  export const BASE_URL = baseURL
 const API = axios.create({ baseURL });
+
 
 API.interceptors.request.use(config => {
   const token = localStorage.getItem('token');

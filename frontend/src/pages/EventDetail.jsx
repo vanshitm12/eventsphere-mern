@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api/api';
+import { BASE_URL } from "../api/api";
 
 export default function EventDetail({ user }) {
   const { id } = useParams();
@@ -79,11 +80,17 @@ export default function EventDetail({ user }) {
     <div className="container py-4">
       <div className="row">
         <div className="col-md-6">
-          <img
-            src={event.image || '/placeholder.jpg'}
-            alt={event.title}
-            className="img-fluid rounded shadow-sm mb-4"
-          />
+        <img
+             src={
+            event.image
+            ? event.image.startsWith("http")
+            ? event.image
+            : `${BASE_URL}/${event.image}`
+            : "/placeholder.jpg"
+                }
+  alt={event.title}
+  className="img-fluid rounded shadow-sm mb-4"
+/>
         </div>
 
         <div className="col-md-6 d-flex flex-column justify-content-center">

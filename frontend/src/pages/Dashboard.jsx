@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import API from '../api/api';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from "../api/api";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
@@ -46,12 +47,18 @@ export default function Dashboard() {
           {events.map((ev) => (
             <div key={ev._id} className="col-md-4 mb-4">
               <div className="card shadow-sm border-0">
-                <img
-                  src={ev.image || '/placeholder.jpg'}
-                  alt={ev.title}
-                  className="card-img-top"
-                  style={{ height: '180px', objectFit: 'cover' }}
-                />
+              <img
+                src={
+                  ev.image
+                  ? ev.image.startsWith("http")
+                  ? ev.image
+                  : `${BASE_URL}/${ev.image}`
+                  : "/placeholder.jpg"
+                    }
+  alt={ev.title}
+  className="card-img-top"
+  style={{ height: "180px", objectFit: "cover" }}
+/>
                 <div className="card-body">
                   <h5 className="card-title">{ev.title}</h5>
                   <p className="card-text text-muted">{ev.location}</p>
