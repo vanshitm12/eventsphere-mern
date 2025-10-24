@@ -12,7 +12,7 @@ const app = express();
 
 // CORS Configuration - UPDATED
 const allowedOrigins = [
-  'https://eventspheremern.vercel.app/',
+  'https://eventspheremern.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000'
 ];
