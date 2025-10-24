@@ -1,108 +1,50 @@
-# EventSphere (MERN) — Starter (Improved Frontend + Deployable ZIP)
+# EventSphere
 
-This repository is a fully working starter MERN project (backend + frontend using Vite + Tailwind). It includes JWT auth, event CRUD, registration flow, QR-code generation (backend), and a polished responsive frontend.
+EventSphere is a web-based **event management platform** that allows users to **create, manage, and register for events** seamlessly.
 
-## What you will get
-- Backend: Node.js, Express, MongoDB (Mongoose), JWT auth, QR generation, basic admin stats.
-- Frontend: React (Vite), Tailwind CSS, clean UI, login/signup, events listing, details, registration, dashboard.
+## Live Demo
 
----
+- **Frontend:** [EventSphere Frontend](https://eventspheremern-b0igonzd6-vanshits-projects-1a4df8a4.vercel.app)  
+- **Backend API:** [EventSphere Backend](https://eventsphere-mern.onrender.com)
 
-## Quick baby-steps to get it running locally (very detailed)
+> Replace these links if you deploy to Netlify or another platform.
 
-### 1) Prerequisites
-- Node.js (v18+ recommended)
-- npm
-- Git
-- A MongoDB Atlas account (or local MongoDB)
+## Features
 
-### 2) Setup MongoDB Atlas
-1. Sign in to https://www.mongodb.com/cloud/atlas and create a free cluster.
-2. In **Network Access** add your IP (or `0.0.0.0/0` for testing).
-3. In **Database Access** create a database user with a password.
-4. Get the **connection string** (click *Connect* → *Connect your application*), copy the URI and replace `<password>` with your DB user password. Example:
-   ```
-   mongodb+srv://<user>:<password>@cluster0.xyz.mongodb.net/eventsphere?retryWrites=true&w=majority
-   ```
+- **User Authentication** – Secure signup and login functionality.  
+- **Event Management** – Admins can create, edit, and delete events.  
+- **Event Registration** – Users can register for events and view details.  
+- **Responsive Frontend** – Built with **React and Vite** for a smooth user experience.  
+- **Backend API** – Developed with **Node.js, Express, and MongoDB** for robust data management.  
+- **Cloud Integration** – Supports media uploads via **Cloudinary**.  
+- **Secure Access** – JWT-based authentication with proper CORS handling.
 
-### 3) Backend setup (local)
-1. Open terminal:
-   ```
-   cd eventsphere/backend
-   npm install
-   ```
-2. Create a `.env` in `backend/` using `.env.example`. Fill values:
-   - MONGO_URI = your Atlas URI
-   - JWT_SECRET = a long random string
-   - CLOUDINARY_* (optional, only if using image upload)
-   - SMTP_* (optional, for emails)
-   - FRONTEND_URL = http://localhost:5173
-3. Start backend:
-   ```
-   npm run start:dev
-   ```
-   Server should run on port 5000 by default.
+## Tech Stack
 
-### 4) Frontend setup (local)
-1. Open a new terminal:
-   ```
-   cd eventsphere/frontend
-   npm install
-   ```
-2. Create a file `.env` at `frontend/` with:
-   ```
-   VITE_API_URL=http://localhost:5000/api
-   ```
-3. Start frontend:
-   ```
-   npm run dev
-   ```
-   The app runs at `http://localhost:5173`.
+- **Frontend:** React, Vite, Bootstrap, Axios  
+- **Backend:** Node.js, Express, MongoDB, JWT  
+- **Media Uploads:** Cloudinary
 
-### 5) Create an admin user (quick)
-- Use MongoDB Atlas > Collections > insert a document in `users` collection:
-```json
-{
-  "name": "Admin",
-  "email": "admin@example.com",
-  "password": "<bcrypt-hashed-password>",
-  "role": "admin"
-}
-```
-Easiest: register via the signup page, then update the user's `role` value to `admin` in Atlas UI.
+## Screenshots
 
-### 6) Test flows
-- Sign up, login.
-- Create events using an Organizer account (role = organizer).
-- Browse events on landing, register for an event (must be logged in).
-- Check Dashboard and Admin pages.
+<img width="2880" height="1800" alt="image" src="https://github.com/user-attachments/assets/b260a8a4-36b9-4ef5-8f98-377d0240b171" />
+<img width="2880" height="1800" alt="Screenshot 2025-10-24 at 10 34 14 PM" src="https://github.com/user-attachments/assets/84c07cc6-4759-4c64-94ed-1c5f5d58feb3" />
+<img width="2880" height="1800" alt="Screenshot 2025-10-24 at 10 35 49 PM" src="https://github.com/user-attachments/assets/a82d5f84-f582-48fd-a54d-a14ddaaf61ed" />
 
----
 
-## Push to GitHub (step-by-step)
-1. Create a repo on GitHub (e.g. `eventsphere`).
-2. Initialize local git:
-```
-cd eventsphere
-git init
-git add .
-git commit -m "Initial commit - EventSphere starter"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo>.git
-git push -u origin main
-```
 
----
+## Getting Started
 
-## Deployment suggestions (simple)
-### Backend (Render / Railway / Heroku)
-- Create a new service, connect to your GitHub repo and point to `backend/`.
-- Set env variables in the service dashboard (MONGO_URI, JWT_SECRET, CLOUDINARY_*, SMTP_*).
-- Start service; note backend URL (e.g. `https://eventsphere-api.onrender.com`).
+### Prerequisites
 
-### Frontend (Vercel / Netlify)
-- Connect your GitHub repo, use root `frontend/` (or set build command `npm run build` and publish `dist`).
-- Set environment variable `VITE_API_URL` to your deployed backend API URL + `/api`.
-- Deploy.
+- Node.js >= 18  
+- npm or yarn  
+- MongoDB Atlas account (or local MongoDB)  
+- Cloudinary account for media uploads
 
----
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/vanshitm12/eventsphere-mern.git
