@@ -1,76 +1,97 @@
-import React, { useEffect, useState } from 'react';
-import API from '../api/api';
-import { Link } from 'react-router-dom';
-import { BASE_URL } from "../api/api";
+import React, { useEffect, useState } from "react";
+import API, { BASE_URL } from "../api/api";
+import { Link } from "react-router-dom";
 
-export default function Dashboard() {
+const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const fetchRegisteredEvents = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setEvents(JSON.parse(localStorage.getItem('registeredEvents') || '[]'));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const res = await API.get('/register/my', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEvents(res.data || []);
-    } catch (err) {
-      console.error('Error fetching registered events:', err);
-      // fallback to localStorage
-      const localEvents = JSON.parse(localStorage.getItem('registeredEvents') || '[]');
-      setEvents(localEvents);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Ensure we remove /api for image paths
+  const mediaBase = BASE_URL.replace(/\/api$/, "");
 
   useEffect(() => {
-    fetchRegisteredEvents();
+    const fetchEvents = async () => {
+      try {
+        const res = await API.get("/events");
+        setEvents(res.data);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setError("Failed to load events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
   }, []);
 
-  if (loading) return <p className="text-center mt-5">Loading your dashboard...</p>;
+  if (loading)
+    return (
+      <div className="text-center mt-5">
+        <div className="spinner-border text-primary"></div>
+      </div>
+    );
+
+  if (error)
+    return <div className="alert alert-danger text-center mt-4">{error}</div>;
 
   return (
-    <div className="container py-5">
-      <h2 className="fw-bold mb-4 text-center">My Registered Events</h2>
+    <div className="container mt-4">
+      <h2 className="text-center mb-4">Admin Dashboard</h2>
+      <div className="row">
+        {events.length === 0 ? (
+          <p className="text-center">No events available</p>
+        ) : (
+          events.map((ev) => {
+            // ✅ Fix: Always prefer imageURL over image
+            const imgSrc = ev.imageURL
+              ? ev.imageURL.startsWith("http")
+                ? ev.imageURL
+                : `${mediaBase}/${ev.imageURL}`
+              : ev.image
+              ? ev.image.startsWith("http")
+                ? ev.image
+                : `${mediaBase}/${ev.image}`
+              : `https://picsum.photos/seed/${ev._id}/600/400`;
 
-      {events.length === 0 ? (
-        <p className="text-center text-muted">You haven’t registered for any events yet.</p>
-      ) : (
-        <div className="row">
-          {events.map((ev) => (
-            <div key={ev._id} className="col-md-4 mb-4">
-              <div className="card shadow-sm border-0">
-              <img
-                src={
-                  ev.image
-                  ? ev.image.startsWith("http")
-                  ? ev.image
-                  : `${BASE_URL}/${ev.image}`
-                  : "/placeholder.jpg"
-                    }
-  alt={ev.title}
-  className="card-img-top"
-  style={{ height: "180px", objectFit: "cover" }}
-/>
-                <div className="card-body">
-                  <h5 className="card-title">{ev.title}</h5>
-                  <p className="card-text text-muted">{ev.location}</p>
-                  <Link to={`/events/${ev._id}`} className="btn btn-outline-primary btn-sm">
-                    View Details
-                  </Link>
+            return (
+              <div key={ev._id} className="col-md-4 mb-4">
+                <div className="card h-100 shadow-sm">
+                  <img
+                    src={imgSrc}
+                    alt={ev.title}
+                    className="card-img-top"
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{ev.title}</h5>
+                    <p className="card-text text-muted">
+                      {new Date(ev.date).toLocaleDateString()}
+                    </p>
+                    <div className="d-flex justify-content-between">
+                      <Link
+                        to={`/event/${ev._id}`}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        to={`/edit/${ev._id}`}
+                        className="btn btn-sm btn-outline-secondary"
+                      >
+                        Edit
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            );
+          })
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
