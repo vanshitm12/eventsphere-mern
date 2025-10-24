@@ -12,7 +12,7 @@ const app = express();
 
 // CORS Configuration - UPDATED
 const allowedOrigins = [
-  'https://eventspheremern-g3d7jgwye-vanshits-projects-1a4df8a4.vercel.app',
+  'https://eventspheremern-8l735bw9z-vanshits-projects-1a4df8a4.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000'
 ];
