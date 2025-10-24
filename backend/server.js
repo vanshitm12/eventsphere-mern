@@ -9,7 +9,10 @@ const adminRoutes = require('./routes/admin');
 const registerRoutes = require('./routes/register');
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL || true }));
+app.use(cors({
+  origin: "https://eventspheremern-b0igonzd6-vanshits-projects-1a4df8a4.vercel.app",
+  credentials: true
+}));
 app.use(express.json({ limit: '5mb' }));
 
 app.use('/api/auth', authRoutes);
