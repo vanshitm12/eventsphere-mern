@@ -48,6 +48,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true
 }).then(() => {
   console.log('MongoDB connected');
+  console.log('CORS enabled for Vercel deployments');
   app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 }).catch(err => {
   console.error('MongoDB connection error', err);
