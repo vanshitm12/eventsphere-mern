@@ -2,12 +2,6 @@ import React, { useEffect, useState } from "react";
 import API, { BASE_URL } from "../api/api";
 import { Link } from "react-router-dom";
 
-/**
- * Dashboard — shows only events the logged-in user is registered for.
- * - reads user from localStorage: { id, name, ... } (set on login)
- * - fetches all events and filters by registeredUsers containing user.id
- * - image handling consistent with other pages (imageURL preferred)
- */
 const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,21 +15,17 @@ const Dashboard = () => {
         const res = await API.get("/events");
         const all = res.data || [];
 
-        // get logged-in user id from localStorage
         const localUser = JSON.parse(localStorage.getItem("user") || "null");
         const userId = localUser ? localUser.id || localUser._id : null;
 
         if (!userId) {
-          // not logged in — show helpful message
           setEvents([]);
           setError("Please log in to see your registered events.");
           return;
         }
 
-        // Filter events where registeredUsers includes userId
         const registeredEvents = all.filter((ev) => {
           if (!ev.registeredUsers) return false;
-          // registeredUsers may be array of ObjectId strings
           return ev.registeredUsers.some((rid) => String(rid) === String(userId));
         });
 
@@ -53,26 +43,49 @@ const Dashboard = () => {
 
   if (loading)
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" role="status" />
+      <div className="text-center mt-5 py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="text-muted mt-3">Loading your events...</p>
       </div>
     );
 
   if (error)
     return (
-      <div className="container mt-4">
-        <div className="alert alert-info">{error}</div>
+      <div className="container mt-4 fade-in">
+        <div className="alert alert-info">
+          <strong>ℹ️ {error}</strong>
+        </div>
+        <Link to="/login" className="btn btn-primary">
+          Login to Continue
+        </Link>
       </div>
     );
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">My Registered Events</h2>
+    <div className="container mt-4 fade-in">
+      <div className="mb-5">
+        <h2 className="display-6 fw-bold mb-2">
+          <span className="text-gradient">My Events</span>
+        </h2>
+        <p className="text-muted">Events you're registered for</p>
+      </div>
 
       {events.length === 0 ? (
-        <p className="text-center text-muted">You have not registered for any events yet.</p>
+        <div className="text-center py-5">
+          <div className="mb-4" style={{ fontSize: '4rem' }}>🎫</div>
+          <h4 className="mb-3">No Registered Events</h4>
+          <p className="text-muted mb-4">
+            You haven't registered for any events yet. Start exploring!
+          </p>
+          <Link to="/events" className="btn btn-primary">
+            <span className="me-2">🔍</span>
+            Browse Events
+          </Link>
+        </div>
       ) : (
-        <div className="row">
+        <div className="row g-4">
           {events.map((ev) => {
             const srcField = ev.imageURL || ev.image;
             const imgSrc = srcField
@@ -82,22 +95,32 @@ const Dashboard = () => {
               : `https://picsum.photos/seed/${ev._id}/600/400`;
 
             return (
-              <div key={ev._id} className="col-md-4 mb-4">
-                <div className="card h-100 shadow-sm">
-                  <img
-                    src={imgSrc}
-                    alt={ev.title}
-                    className="card-img-top"
-                    style={{ height: 200, objectFit: "cover" }}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{ev.title}</h5>
-                    <p className="card-text text-muted">
-                      {ev.date ? new Date(ev.date).toLocaleDateString() : ""}
+              <div key={ev._id} className="col-md-6 col-lg-4">
+                <div className="card card-custom h-100">
+                  <div className="img-overlay-container" style={{ height: '200px' }}>
+                    <img
+                      src={imgSrc}
+                      alt={ev.title}
+                      className="card-img-top h-100 w-100"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                  <div className="card-body d-flex flex-column">
+                    <span className="badge bg-primary align-self-start mb-2">
+                      {ev.category || 'Event'}
+                    </span>
+                    <h5 className="card-title mb-2">{ev.title}</h5>
+                    <p className="card-text text-muted small mb-3">
+                      📅 {ev.date ? new Date(ev.date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      }) : 'TBA'}
                     </p>
-                    <div className="d-flex justify-content-between">
-                      <Link to={`/event/${ev._id}`} className="btn btn-sm btn-outline-primary">
-                        View
+                    <div className="mt-auto">
+                      <Link to={`/events/${ev._id}`} className="btn btn-outline-primary w-100">
+                        <span className="me-1">👁️</span>
+                        View Details
                       </Link>
                     </div>
                   </div>

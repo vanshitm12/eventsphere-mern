@@ -22,14 +22,12 @@ export default function Login({ setUser }) {
 
       if (!response.data.token) throw new Error("Token missing from server!");
 
-      // ✅ Store JWT and user info
       localStorage.setItem('token', response.data.token);
       if (response.data.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         if (setUser) setUser(response.data.user);
       }
 
-      // ✅ Redirect back if redirected to login earlier
       const from = location.state?.from || '/dashboard';
       navigate(from, { replace: true });
     } catch (err) {
@@ -40,50 +38,93 @@ export default function Login({ setUser }) {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '500px' }}>
-      <h3 className="mb-4 fw-bold text-center">Login to EventSphere</h3>
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <form onSubmit={submit}>
-        <div className="mb-3">
-          <label className="form-label">Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <div className="input-group">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              className="form-control"
-              value={pass}
-              onChange={(e) => setPass(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+    <div className="container mt-5 fade-in" style={{ maxWidth: '500px' }}>
+      <div className="card card-custom p-5 border-0 shadow-xl">
+        <div className="text-center mb-4">
+          <div className="mb-3">
+            <span style={{ fontSize: '3rem' }}>👋</span>
           </div>
+          <h2 className="fw-bold mb-2">Welcome Back</h2>
+          <p className="text-muted">Login to your EventSphere account</p>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+        {error && (
+          <div className="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> {error}
+            <button 
+              type="button" 
+              className="btn-close" 
+              onClick={() => setError('')}
+              aria-label="Close"
+            ></button>
+          </div>
+        )}
 
-      <p className="mt-3 text-center">
-        Don’t have an account? <Link to="/signup">Register</Link>
-      </p>
+        <form onSubmit={submit}>
+          <div className="mb-4">
+            <label className="form-label">Email Address</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label">Password</label>
+            <div className="position-relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="form-control"
+                placeholder="Enter your password"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                required
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex="-1"
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn btn-primary w-100 btn-lg mb-3" 
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Logging in...
+              </>
+            ) : (
+              <>
+                <span className="me-2">🚀</span>
+                Login
+              </>
+            )}
+          </button>
+
+          <div className="text-center">
+            <p className="text-muted mb-0">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-decoration-none fw-bold">
+                Create Account
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

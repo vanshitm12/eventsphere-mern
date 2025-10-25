@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import API, { BASE_URL } from "../api/api";
 
-/**
- * EventDetail page
- * - fetches one event
- * - shows image (handles imageURL vs image and absolute vs relative)
- * - allows authenticated user to register (POST /api/register/:eventId)
- * - after successful registration, marks registered = true so dashboard filtering will apply
- */
 export default function EventDetail() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
@@ -16,7 +9,7 @@ export default function EventDetail() {
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState(null);
   const [qrDataURL, setQrDataURL] = useState(null);
-  const mediaBase = BASE_URL.replace(/\/api$/, ""); // safe origin for images
+  const mediaBase = BASE_URL.replace(/\/api$/, "");
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -25,12 +18,10 @@ export default function EventDetail() {
         const res = await API.get(`/events/${id}`);
         setEvent(res.data || null);
 
-        // detect if current user is in registeredUsers (if logged in)
         try {
           const localUser = JSON.parse(localStorage.getItem("user") || "null");
           if (localUser && res.data?.registeredUsers) {
             const uid = localUser.id || localUser._id;
-            // registeredUsers may be array of ObjectId strings
             const isRegistered = res.data.registeredUsers.some(
               (r) => String(r) === String(uid)
             );
@@ -53,19 +44,16 @@ export default function EventDetail() {
   const handleRegister = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      // user not logged in: redirect to login (or show message)
       return alert("Please log in to register for events.");
     }
 
     try {
       const res = await API.post(`/register/${id}`);
-      // server returns { message, qrCode } in this project
       if (res.data?.qrCode) {
         setQrDataURL(res.data.qrCode);
       }
       setRegistered(true);
 
-      // optimistic UI: also update event.registeredUsers locally so the UI reflects registration
       setEvent((prev) => {
         if (!prev) return prev;
         const localUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -85,21 +73,26 @@ export default function EventDetail() {
 
   if (loading)
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" role="status" />
+      <div className="text-center mt-5 py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="text-muted mt-3">Loading event details...</p>
       </div>
     );
 
   if (error)
     return (
-      <div className="container mt-4">
+      <div className="container mt-4 fade-in">
         <div className="alert alert-danger">{error}</div>
+        <Link to="/events" className="btn btn-outline-primary">
+          ← Back to Events
+        </Link>
       </div>
     );
 
   if (!event) return null;
 
-  // Build image URL using imageURL preferred field, fallback to image, then placeholder.
   const srcField = event.imageURL || event.image;
   const imgSrc = srcField
     ? srcField.startsWith("http")
@@ -108,43 +101,90 @@ export default function EventDetail() {
     : `https://picsum.photos/seed/${event._id}/900/500`;
 
   return (
-    <div className="container mt-5">
-      <div className="card shadow-sm">
-        <img
-          src={imgSrc}
-          alt={event.title}
-          className="img-fluid rounded-top"
-          style={{ maxHeight: 450, objectFit: "cover", width: "100%" }}
-        />
-        <div className="card-body">
-          <h2 className="card-title">{event.title}</h2>
-          <p className="text-muted mb-1">
-            {event.date ? new Date(event.date).toLocaleString() : ""}
-          </p>
-          <p className="mb-2">
-            <strong>Location:</strong> {event.location || "TBA"}
-          </p>
-          <p className="mb-2">
-            <strong>Category:</strong> {event.category || "General"}
-          </p>
-          <p className="card-text">{event.description}</p>
+    <div className="container mt-4 fade-in">
+      <Link to="/events" className="btn btn-outline-primary mb-4">
+        <span className="me-2">←</span>
+        Back to Events
+      </Link>
 
-          {!registered ? (
-            <button onClick={handleRegister} className="btn btn-success mt-3">
-              Register for Event
-            </button>
-          ) : (
-            <div className="alert alert-success mt-3">
-              You’re registered for this event!
-            </div>
-          )}
+      <div className="card card-custom shadow-lg border-0">
+        <div className="img-overlay-container" style={{ maxHeight: '500px', overflow: 'hidden' }}>
+          <img
+            src={imgSrc}
+            alt={event.title}
+            className="img-fluid w-100"
+            style={{ objectFit: 'cover', height: '500px' }}
+          />
+        </div>
+        
+        <div className="card-body p-5">
+          <div className="row">
+            <div className="col-lg-8">
+              <div className="mb-4">
+                <span className="badge bg-primary mb-3">{event.category || 'Event'}</span>
+                <h1 className="display-5 fw-bold mb-3">{event.title}</h1>
+              </div>
 
-          {qrDataURL && (
-            <div className="mt-3">
-              <h6>Your QR code (save this):</h6>
-              <img src={qrDataURL} alt="QR code" style={{ maxWidth: 240 }} />
+              <div className="d-flex flex-wrap gap-4 mb-4 pb-4 border-bottom">
+                <div>
+                  <div className="text-muted small mb-1">📅 Date</div>
+                  <div className="fw-semibold">
+                    {event.date ? new Date(event.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) : 'TBA'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted small mb-1">🕐 Time</div>
+                  <div className="fw-semibold">
+                    {event.date ? new Date(event.date).toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) : 'TBA'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted small mb-1">📍 Location</div>
+                  <div className="fw-semibold">{event.location || "TBA"}</div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <h5 className="fw-bold mb-3">About This Event</h5>
+                <p className="text-muted" style={{ lineHeight: '1.8' }}>
+                  {event.description || 'No description available.'}
+                </p>
+              </div>
+
+              {!registered ? (
+                <button onClick={handleRegister} className="btn btn-success btn-lg">
+                  <span className="me-2">🎫</span>
+                  Register for Event
+                </button>
+              ) : (
+                <div className="alert alert-success d-flex align-items-center">
+                  <span className="me-2" style={{ fontSize: '1.5rem' }}>✅</span>
+                  <div>
+                    <strong>You're registered!</strong>
+                    <p className="mb-0 mt-1">You're all set for this event. See you there!</p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            <div className="col-lg-4">
+              {qrDataURL && (
+                <div className="card card-custom p-4 text-center">
+                  <h6 className="fw-bold mb-3">Your QR Code</h6>
+                  <img src={qrDataURL} alt="QR code" className="img-fluid mb-3" style={{ maxWidth: 240, margin: '0 auto' }} />
+                  <p className="text-muted small mb-0">Save this QR code for event check-in</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
