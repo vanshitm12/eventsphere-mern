@@ -29,6 +29,8 @@ Backend: Node.js - Express - MongoDB - JWT
 Media Storage: Cloudinary
 
 📋 Screenshots
+![alt text](<Screenshot 2025-10-25 at 5.26.54 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.26.57 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.27.01 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.27.03 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.27.12 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.27.14 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.27.19 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.28.17 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.28.26 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.28.28 PM.png>) ![alt text](<Screenshot 2025-10-25 at 5.28.31 PM.png>)
+
 
 ✨ Getting Started
 Prerequisites
