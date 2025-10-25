@@ -8,20 +8,26 @@ export default function Navbar(){
     localStorage.removeItem('user');
     navigate('/login');
   };
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  let user = null;
+  try {
+    const raw = localStorage.getItem('user');
+    user = raw ? JSON.parse(raw) : null;
+  } catch(e) {
+    user = null;
+  }
 
   return (
     <header className="bg-white border-b">
       <div className="container flex items-center justify-between py-4">
         <div className="flex items-center gap-4">
-          <Link to="/" className="text-2xl font-bold text-sky-600">EventSphere</Link>
-          <Link to="/events" className="text-sm text-slate-600">Events</Link>
+          <Link to="/" className="font-bold text-lg">EventSphere</Link>
         </div>
+
         <div>
           {user ? (
             <div className="flex items-center gap-3">
-              <span className="text-sm text-slate-700">Hi, {user.name}</span>
-              <Link to="/dashboard" className="text-sm text-slate-600">Dashboard</Link>
+              <span className="text-sm text-slate-600">Hi, {user.name || user.email}</span>
               {user.role === 'admin' && <Link to="/admin" className="text-sm text-slate-600">Admin</Link>}
               <button onClick={logout} className="ml-2 btn bg-rose-500 text-white">Logout</button>
             </div>

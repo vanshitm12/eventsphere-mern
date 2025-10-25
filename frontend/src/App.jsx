@@ -65,6 +65,8 @@ export default function App() {
           <Route path="/events/:id" element={<EventDetail user={user} />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/create" element={<Admin />} />
+          <Route path="/admin/edit/:id" element={<Admin />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
