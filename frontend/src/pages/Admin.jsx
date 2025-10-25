@@ -163,7 +163,7 @@ export default function Admin() {
                 {events.map(ev => (
                   <div key={ev._id} className="card mb-3 border">
                     <div className="card-body">
-                    <div className="d-flex justify-content-between align-items-start">
+                      <div className="d-flex justify-content-between align-items-start">
                         <div className="flex-grow-1">
                           <h6 className="fw-bold mb-1">{ev.title}</h6>
                           <small className="text-muted">
@@ -175,13 +175,13 @@ export default function Admin() {
                             className="btn btn-sm btn-warning" 
                             onClick={() => startEdit(ev)}
                           >
-                            ✏️
+                            ✏️ Edit
                           </button>
                           <button 
                             className="btn btn-sm btn-danger" 
                             onClick={() => handleDelete(ev._id)}
                           >
-                            🗑️
+                            🗑️ Delete
                           </button>
                         </div>
                       </div>
