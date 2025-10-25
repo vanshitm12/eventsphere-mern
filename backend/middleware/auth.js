@@ -12,6 +12,6 @@ exports.authenticateUser = (req, res, next) => {
     req.user = { id: decoded.id }; // attach user ID to request
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid token" }); // invalid token
   }
 };
